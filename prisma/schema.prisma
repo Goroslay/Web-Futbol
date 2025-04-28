@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Torneo {
+  id          Int       @id @default(autoincrement())
+  nombre      String    @unique
+  temporada   String?
+  fechaInicio DateTime?
+  fechaFin    DateTime?
+  descripcion String?
+  equipos     Equipo[]
+  partidos    Partido[]
+  estadisticasJugador EstadisticaJugador[]
+}
+
+model Equipo {
+  id             Int           @id @default(autoincrement())
+  nombre         String        @unique
+  logo           String?
+  fechaFundacion DateTime?
+  ciudad         String
+  estadio        String?
+  jugadores      Jugador[]
+  torneo         Torneo?       @relation(fields: [torneoId], references: [id])
+  torneoId       Int?
+  tecnico        Tecnico?      @relation(fields: [tecnicoId], references: [id])
+  tecnicoId      Int?          @unique
+  partidosLocal  Partido[]     @relation("EquipoLocal")
+  partidosVisitante Partido[]  @relation("EquipoVisitante")
+  goles          Gol[]
+  transferenciasOrigen Transferencia[] @relation("EquipoOrigen")
+  transferenciasDestino Transferencia[] @relation("EquipoDestino")
+}
+
+model Tecnico {
+  id              Int       @id @default(autoincrement())
+  nombres         String
+  apellidos       String
+  fechaNacimiento DateTime?
+  equipo          Equipo?
+}
+
+model Jugador {
+  id              String    @id
+  nombres         String
+  apellidos       String
+  fechaNacimiento DateTime?
+  nacionalidad    String
+  posicion        String
+  dorsal          Int
+  equipo          Equipo    @relation(fields: [equipoId], references: [id])
+  equipoId        Int
+  goles           Gol[]
+  tarjetas        Tarjeta[]
+  transferencias  Transferencia[]
+  estadisticas    EstadisticaJugador[]
+
+  @@unique([dorsal, equipoId])
+}
+
+enum posiciones{
+  PO
+  LD
+  DF
+  LI
+  MCD
+  MC
+  MCO
+  MI
+  MD
+  EI
+  ED
+  DC
+}
+
+model Estadio {
+  id        Int       @id @default(autoincrement())
+  nombre    String    @unique
+  ciudad    String
+  capacidad BigInt
+  partidos  Partido[]
+}
+
+model Partido {
+  id                Int       @id @default(autoincrement())
+  torneo            Torneo    @relation(fields: [torneoId], references: [id])
+  torneoId          Int
+  equipoLocal       Equipo    @relation("EquipoLocal", fields: [equipoLocalId], references: [id])
+  equipoLocalId     Int
+  equipoVisitante   Equipo    @relation("EquipoVisitante", fields: [equipoVisitanteId], references: [id])
+  equipoVisitanteId Int
+  golesLocal        Int       @default(0)
+  golesVisitante    Int       @default(0)
+  fecha             DateTime
+  estadio           Estadio   @relation(fields: [estadioId], references: [id])
+  estadioId         Int
+  estado            estadoPartido    @default(programado)
+  goles             Gol[]
+  tarjetas          Tarjeta[]
+}
+enum estadoPartido{
+  programado
+  curso
+  finalizado
+  suspendido
+}
+
+model Gol {
+  id        Int      @id @default(autoincrement())
+  partido   Partido  @relation(fields: [partidoId], references: [id])
+  partidoId Int
+  jugador   Jugador  @relation(fields: [jugadorId], references: [id])
+  jugadorId String
+  minuto    DateTime
+  equipo    Equipo   @relation(fields: [equipoId], references: [id])
+  equipoId  Int
+}
+
+model Tarjeta {
+  id        Int      @id @default(autoincrement())
+  partido   Partido  @relation(fields: [partidoId], references: [id])
+  partidoId Int
+  jugador   Jugador  @relation(fields: [jugadorId], references: [id])
+  jugadorId String
+  minuto    Int
+  tipo      tipoTarjeta
+}
+
+enum tipoTarjeta{
+  amarilla
+  roja
+}
+
+model EstadisticaJugador {
+  id              Int      @id @default(autoincrement())
+  jugador         Jugador  @relation(fields: [jugadorId], references: [id])
+  jugadorId       String
+  torneo          Torneo   @relation(fields: [torneoId], references: [id])
+  torneoId        Int
+  partidosJugados Int      @default(0)
+  goles           Int      @default(0)
+  asistencias     Int      @default(0)
+  tarjetasAmarillas Int    @default(0)
+  tarjetasRojas   Int      @default(0)
+  minutosJugados  Int      @default(0)
+
+  @@unique([jugadorId, torneoId])
+}
+
+model Transferencia {
+  id              Int      @id @default(autoincrement())
+  jugador         Jugador  @relation(fields: [jugadorId], references: [id])
+  jugadorId       String
+  equipoOrigen    Equipo   @relation("EquipoOrigen", fields: [equipoOrigenId], references: [id])
+  equipoOrigenId  Int
+  equipoDestino   Equipo   @relation("EquipoDestino", fields: [equipoDestinoId], references: [id])
+  equipoDestinoId Int
+  fecha           DateTime
+  monto           Decimal? @db.Decimal(10, 2)
+  tipo tipoTransferencia
+}
+
+enum tipoTransferencia{
+  traspaso
+  prestamo
+  libre
+}

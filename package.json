@@ -2,9 +2,10 @@
   "name": "web-futbol",
   "version": "1.0.0",
   "description": "Web de futbol con node, express, postgres",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,11 @@
   },
   "homepage": "https://github.com/Goroslay/Web-Futbol#readme",
   "dependencies": {
+    "@prisma/client": "^6.6.0",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prisma": "^6.6.0"
   }
 }
