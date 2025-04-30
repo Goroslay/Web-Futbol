@@ -39,7 +39,9 @@ model Equipo {
   tecnicoId      Int?          @unique
   partidosLocal  Partido[]     @relation("EquipoLocal")
   partidosVisitante Partido[]  @relation("EquipoVisitante")
-  goles          Gol[]
+  golesAFavor    Gol[]         @relation("GolAFavor")
+  golesEnContra  Gol[]         @relation("GolEnContra")
+  puntos         Int           @default(0)
   transferenciasOrigen Transferencia[] @relation("EquipoOrigen")
   transferenciasDestino Transferencia[] @relation("EquipoDestino")
 }
@@ -85,13 +87,6 @@ enum posiciones{
   DC
 }
 
-model Estadio {
-  id        Int       @id @default(autoincrement())
-  nombre    String    @unique
-  ciudad    String
-  capacidad BigInt
-  partidos  Partido[]
-}
 
 model Partido {
   id                Int       @id @default(autoincrement())
@@ -104,8 +99,6 @@ model Partido {
   golesLocal        Int       @default(0)
   golesVisitante    Int       @default(0)
   fecha             DateTime
-  estadio           Estadio   @relation(fields: [estadioId], references: [id])
-  estadioId         Int
   estado            estadoPartido    @default(programado)
   goles             Gol[]
   tarjetas          Tarjeta[]
@@ -124,8 +117,10 @@ model Gol {
   jugador   Jugador  @relation(fields: [jugadorId], references: [id])
   jugadorId String
   minuto    DateTime
-  equipo    Equipo   @relation(fields: [equipoId], references: [id])
-  equipoId  Int
+  deEquipo    Equipo   @relation("GolAFavor",fields: [deEquipoId], references: [id])
+  deEquipoId  Int
+  aEquipo    Equipo   @relation("GolEnContra",fields: [aEquipoId], references: [id])
+  aEquipoId  Int
 }
 
 model Tarjeta {
