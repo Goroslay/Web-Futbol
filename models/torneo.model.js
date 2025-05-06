@@ -36,10 +36,6 @@ const obtenerTorneo= async (filtros={}) => {
             fechaInicio:'desc'
         }
     })
-
-    if(torneos.length===0){
-        throw new AppError('Recurso no encontrado',404)
-    }
     
     return torneos
 }
@@ -59,10 +55,7 @@ const crearTorneo= async (torneo)=>{
                 temporada:torneo.temporada,
                 fechaInicio:torneo.inicio,
                 fechaFin:torneo.fin,
-                descripcion:torneo.descripcion,
-                equipos:torneo.equipos || {},
-                partidos:torneo.partidos || {},
-                estadisticasJugador:torneo.estadisticas || {}
+                descripcion:torneo.descripcion
             }
         })
         return nuevoTorneo
@@ -95,12 +88,9 @@ const editarTorneo = async (torneoId,ediciones) => {
             data:{
                 nombre:ediciones.nombre ?? existe.nombre,
                 temporada:ediciones.temporada ?? existe.temporada,
-                fechaInicio:new Date(ediciones.fechaInicio) ?? existe.fechaInicio,
-                fechaFin:new Date(ediciones.fechaFin) ?? existe.fechaFin,
-                descripcion:ediciones.descripcion ?? existe.descripcion,
-                equipos:ediciones.equipos ?? existe.equipos,
-                partidos:ediciones.partidos ?? existe.partidos,
-                estadisticasJugador:ediciones.estadisticas ?? existe.estadisticasJugador
+                fechaInicio:ediciones.fechaInicio ? new Date(ediciones.fechaInicio) : existe.fechaInicio,
+                fechaFin:ediciones.fechaFin ? new Date(ediciones.fechaFin) : existe.fechaFin,
+                descripcion:ediciones.descripcion ?? existe.descripcion
             }
         })
     
@@ -123,12 +113,12 @@ const eliminarTorneo = async (torneoId) => {
             throw new AppError('Este torneo no se encuentra registrado',404)
         }
     
-        await transaccion.torneo.delete({
+        const torneoEliminado = await transaccion.torneo.delete({
             where:{
                 id:torneoId
             }
         })
-        return true
+        return torneoEliminado
 
     })
 }

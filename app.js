@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 
 import indexRoute from './routes/index.route.js'
+import errorHandler from './middlewares/errorHandler.js'
 
 dotenv.config()
 
@@ -12,9 +13,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 
+
 app.use('/api/v1',indexRoute)
-
-
+    
+app.use(errorHandler)
 app.listen(port,()=>{
     console.log(`Servidor corriendo en http://localhost:${port}`)
 })

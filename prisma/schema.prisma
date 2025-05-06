@@ -60,7 +60,7 @@ model Jugador {
   apellidos       String
   fechaNacimiento DateTime?
   nacionalidad    String
-  posicion        String
+  posicion        posiciones
   dorsal          Int
   equipo          Equipo    @relation(fields: [equipoId], references: [id])
   equipoId        Int
@@ -111,16 +111,16 @@ enum estadoPartido{
 }
 
 model Gol {
-  id        Int      @id @default(autoincrement())
-  partido   Partido  @relation(fields: [partidoId], references: [id])
-  partidoId Int
-  jugador   Jugador  @relation(fields: [jugadorId], references: [id])
-  jugadorId String
-  minuto    DateTime
+  id          Int      @id @default(autoincrement())
+  partido     Partido  @relation(fields: [partidoId], references: [id])
+  partidoId   Int
+  jugador     Jugador  @relation(fields: [jugadorId], references: [id])
+  jugadorId   String
+  minuto      Int
   deEquipo    Equipo   @relation("GolAFavor",fields: [deEquipoId], references: [id])
   deEquipoId  Int
-  aEquipo    Equipo   @relation("GolEnContra",fields: [aEquipoId], references: [id])
-  aEquipoId  Int
+  aEquipo     Equipo   @relation("GolEnContra",fields: [aEquipoId], references: [id])
+  aEquipoId   Int
 }
 
 model Tarjeta {

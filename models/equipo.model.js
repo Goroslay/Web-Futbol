@@ -28,10 +28,6 @@ const obtenerEquipo = async (filtros={}) => {
         }
     })
 
-    if(equipos.length===0){
-        throw new AppError('Recurso no encontrado',404)
-    }
-
     return equipos
 
 }
@@ -87,16 +83,9 @@ const agregarEquipo = async (nuevoEquipo) => {
                 fechaFundacion:nuevoEquipo.fechaFundacion,
                 ciudad:nuevoEquipo.ciudad,
                 estadio:nuevoEquipo.estadio,
-                jugadores:nuevoEquipo.jugadores || {},
                 torneoId:nuevoEquipo.torneoId,
                 tecnicoId:nuevoEquipo.tecnicoId,
-                partidosLocal:nuevoEquipo.partidosLocal || {},
-                partidosVisitante:nuevoEquipo.partidosVisitante || {},
-                golesAFavor:nuevoEquipo.golesAFavor || {},
-                golesEnContra:nuevoEquipo.golesEnContra || {},
-                puntos:nuevoEquipo.puntos || 0,
-                transferenciasOrigen:nuevoEquipo.transferenciasOrigen || {},
-                transferenciasDestino: nuevoEquipo.transferenciasDestino || {}
+                puntos:nuevoEquipo.puntos || 0
             }
         })
 
@@ -148,7 +137,14 @@ const editarEquipo = async (equipoId,ediciones) => {
                 id:equipoId
             },
             data:{
-                ediciones
+                nombre: ediciones.nombre ?? existe.nombre,
+                logo: ediciones.logo ?? existe.logo,
+                fechaFundacion: ediciones.fechaFundacion ? new Date(ediciones.fechaFundacion) : existe.fechaFundacion,
+                ciudad: ediciones.ciudad ?? existe.ciudad,
+                estadio: ediciones.estadio ?? existe.estadio,
+                torneoId: ediciones.torneoId ?? existe.torneoId,
+                tecnicoId: ediciones.tecnicoId ?? existe.tecnicoId,
+                puntos: ediciones.puntos ?? existe.puntos
             }
         })
 
@@ -196,14 +192,7 @@ const agregarEquipoATorneo = async (equipoId,torneoId) => {
         })
 
         if(!existeTorneo) throw new AppError('Recurso torneo no encontrado',404)
-    
-        const existeEquipoEnTorneo = await transaccion.equipo.findFirst({
-            where:{
-                torneoId:torneoId
-            }
-        })
-        if(existeEquipoEnTorneo) throw new AppError('Recurso equipo duplicado en torneo',409)
-        
+         
         const nuevoEquipoEnTorneo = await transaccion.equipo.update({
             where:{
                 id:equipoId
