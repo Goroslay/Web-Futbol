@@ -1,5 +1,6 @@
 import express from 'express'
 import dotenv from 'dotenv'
+import morgan from 'morgan'
 
 import indexRoute from './routes/index.route.js'
 import errorHandler from './middlewares/errorHandler.js'
@@ -9,6 +10,7 @@ dotenv.config()
 const app = express()
 const port = process.env.SERVER_PORT
 
+app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

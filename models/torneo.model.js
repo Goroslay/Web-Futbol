@@ -34,6 +34,9 @@ const obtenerTorneo= async (filtros={}) => {
         where,
         orderBy:{
             fechaInicio:'desc'
+        },
+        include:{
+            equipos:true
         }
     })
     
@@ -49,12 +52,19 @@ const crearTorneo= async (torneo)=>{
             throw new AppError('Este torneo ya se encuentra registrado',409)
         }
 
+        const fechaInicio = new Date(torneo.fechaInicio)
+        const fechaFin = new Date(torneo.fechaFin)
+
+        if(fechaFin < fechaInicio) throw new AppError('La fecha de final del torneo no puede ser antes de la fecha de inicio')
+
+        console.log()
+
         const nuevoTorneo = await transaccion.torneo.create({
             data:{
                 nombre:torneo.nombre,
                 temporada:torneo.temporada,
-                fechaInicio:torneo.inicio,
-                fechaFin:torneo.fin,
+                fechaInicio:torneo.fechaInicio,
+                fechaFin:torneo.fechaFin,
                 descripcion:torneo.descripcion
             }
         })
@@ -80,6 +90,11 @@ const editarTorneo = async (torneoId,ediciones) => {
                 throw new AppError('Este torneo ya se encuentra registrado',409)
             }
         }
+
+        const fechaInicio = ediciones.fechaInicio ? new Date(ediciones.fechaInicio) : existe.fechaInicio
+        const fechaFin = ediciones.fechaFin ? new Date(ediciones.fechaFin) : existe.fechaFin
+
+        if(fechaFin < fechaInicio) throw new AppError('La fecha de final del torneo no puede ser antes de la fecha de inicio')
     
         const torneoEditado = await transaccion.torneo.update({
             where:{
@@ -147,44 +162,3 @@ export {
     editarTorneo,
     eliminarTorneo
 }
-
-/*  const obtenerTablaPosiciones = async (torneoId) => {
-    const torneo = await verificarTorneoPorID(torneoId);
-    
-    if (!torneo) {
-      throw new AppError('Este torneo no se encuentra registrado', 404);
-    }
-    
-    // Convertir objeto de equipos a array para ordenar
-    const tablaPosiciones = Object.values(torneo.equipos || {})
-      .sort((a, b) => {
-        // Ordenar por puntos (descendente)
-        if (a.puntos !== b.puntos) {
-          return b.puntos - a.puntos;
-        }
-        
-        // Desempate: diferencia de goles
-        const difGolA = a.golesAFavor - a.golesEnContra;
-        const difGolB = b.golesAFavor - b.golesEnContra;
-        
-        if (difGolA !== difGolB) {
-          return difGolB - difGolA;
-        }
-        
-        // Desempate: goles a favor
-        if (a.golesAFavor !== b.golesAFavor) {
-          return b.golesAFavor - a.golesAFavor;
-        }
-        
-        // Desempate alfabético por nombre
-        return a.nombre.localeCompare(b.nombre);
-      })
-      .map((equipo, index) => ({
-        ...equipo,
-        posicion: index + 1,
-        diferenciaGoles: equipo.golesAFavor - equipo.golesEnContra
-      }));
-    
-    return tablaPosiciones;
-  };
-*/

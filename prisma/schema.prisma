@@ -5,7 +5,6 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,7 +14,7 @@ datasource db {
 
 model Torneo {
   id          Int       @id @default(autoincrement())
-  nombre      String    @unique
+  nombre      String    
   temporada   String?
   fechaInicio DateTime?
   fechaFin    DateTime?
@@ -23,6 +22,8 @@ model Torneo {
   equipos     Equipo[]
   partidos    Partido[]
   estadisticasJugador EstadisticaJugador[]
+
+  @@unique([nombre, temporada])
 }
 
 model Equipo {
@@ -62,8 +63,8 @@ model Jugador {
   nacionalidad    String
   posicion        posiciones
   dorsal          Int
-  equipo          Equipo    @relation(fields: [equipoId], references: [id])
-  equipoId        Int
+  equipo          Equipo?    @relation(fields: [equipoId], references: [id])
+  equipoId        Int?
   goles           Gol[]
   tarjetas        Tarjeta[]
   transferencias  Transferencia[]

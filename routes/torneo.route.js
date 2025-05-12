@@ -1,25 +1,20 @@
 import { Router } from "express";
+import { validarCampos,validateIdNumeric } from "../middlewares/validators/common.validator.js";
+import { validateTorneo } from "../middlewares/validators/index.validator.js";
+import { getTorneos,postTorneo,getTorneoById,putTorneo,deleteTorneo,positionsTorneo} from "../controllers/torneo.controller.js";
 
 const torneoRouter = Router()
 
-torneoRouter.get('/torneos',(req,res,next)=>{
-    res.send('obtener todos los torneos')
-})
+torneoRouter.get('/torneos',validateTorneo.validateTorneoFilter,validarCampos,getTorneos)
 
-torneoRouter.get('/torneos/:id',(req,res,next)=>{
-    res.send('obtener torneos por su id')
-})
+torneoRouter.get('/torneos/:id',validateIdNumeric,validarCampos,getTorneoById)
 
-torneoRouter.post('/torneos',(req,res,next)=>{
-    res.send('agregar torneos')
-})
+torneoRouter.post('/torneos',validateTorneo.validateTorneoCreation,validarCampos,postTorneo)
 
-torneoRouter.get('/torneos/:id',(req,res,next)=>{
-    res.send('editar un torneos por su id')
-})
+torneoRouter.put('/torneos/:id',validateIdNumeric,validateTorneo.validateTorneoUpdate,validarCampos,putTorneo)
 
-torneoRouter.delete('/torneos/:id',(req,res,next)=>{
-    res.send('eliminar torneos por su id')
-})
+torneoRouter.delete('/torneos/:id',validateIdNumeric,validarCampos,deleteTorneo)
+
+torneoRouter.get('/torneos/:id/tabla',validateIdNumeric,validarCampos,positionsTorneo)
 
 export default torneoRouter

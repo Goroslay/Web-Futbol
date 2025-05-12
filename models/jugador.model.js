@@ -25,10 +25,10 @@ const obtenerJugador = async (filtros = {}) => {
 
     const jugadores =await prisma.jugador.findMany({
         where,
-        orderBy:{
-            apellidos:'desc',
-            nombres:'desc'
-        }
+        orderBy: [
+            { apellidos: 'desc' },
+            { nombres: 'desc' }
+        ]
     })
 
     return jugadores
@@ -43,7 +43,7 @@ const crearJugador = async (jugador) => {
             }
         })
 
-        if(existeJugador) throw new AppError('Este recurso ya se encuentra registrado',409)
+        if(existeJugador) throw new AppError('El jugador ya se encuentra registrado',409)
 
         if(jugador.equipoId){
             const existeEquipo = await transaccion.equipo.findFirst({
@@ -52,7 +52,7 @@ const crearJugador = async (jugador) => {
                 }
             })
 
-            if(!existeEquipo) throw new AppError('El recurso equipo no se encuentra registrado',404)
+            if(!existeEquipo) throw new AppError('El equipo no se encuentra registrado',404)
 
             const existeDorsalEquipo = await transaccion.jugador.findFirst({
                 where:{
@@ -62,7 +62,7 @@ const crearJugador = async (jugador) => {
                 }
             })
 
-            if(existeDorsalEquipo) throw new AppError('Este dorsal ya se encuentra en uso en el equipo',409)
+            if(existeDorsalEquipo) throw new AppError('El dorsal ya está en uso en este equipo',409)
         }
         const nuevoJugador = await transaccion.jugador.create({
             data:{
@@ -71,6 +71,7 @@ const crearJugador = async (jugador) => {
                 apellidos:jugador.apellidos,
                 fechaNacimiento: new Date(jugador.fechaNacimiento),
                 nacionalidad:jugador.nacionalidad,
+                posicion:jugador.posicion,
                 dorsal:jugador.dorsal,
                 equipoId:jugador.equipoId
             }
@@ -89,7 +90,7 @@ const editarJugador = async (jugadorId,ediciones) => {
             }
         })
 
-        if(!existeJugador) throw new AppError('Este recurso ya se encuentra registrado',409)
+        if(!existeJugador) throw new AppError('El jugador no se encuentra registrado',404)
         
         if(ediciones.equipoId && !ediciones.dorsal){
             const existeEquipo = await transaccion.equipo.findFirst({
@@ -97,7 +98,7 @@ const editarJugador = async (jugadorId,ediciones) => {
                     id:ediciones.equipoId
                 }
             })
-            if(!existeEquipo) throw new AppError('El recurso equipo no se encuentra registrado',404)
+            if(!existeEquipo) throw new AppError('El equipo no se encuentra registrado',404)
         }
 
         if(ediciones.dorsal && !ediciones.equipoId){
@@ -105,10 +106,13 @@ const editarJugador = async (jugadorId,ediciones) => {
                 where:{
                     equipoId:existeJugador.equipoId,
                     dorsal:ediciones.dorsal,
-                    NOT: { id: jugadorId }
+                    NOT:[
+                            { id: jugadorId },
+                            {equipoId:null}
+                    ]
                 }
             })
-            if(existeDorsalEquipo) throw new AppError('Este recurso ya se encuentra registrado',409)
+            if(existeDorsalEquipo) throw new AppError('El dorsal ya está en uso en este equipo',409)
         }
 
         if(ediciones.dorsal && ediciones.equipoId){
@@ -116,10 +120,13 @@ const editarJugador = async (jugadorId,ediciones) => {
                 where:{
                     equipoId:ediciones.equipoId,
                     dorsal:ediciones.dorsal,
-                    NOT: { id: jugadorId }
+                     NOT:[
+                            { id: jugadorId },
+                            {equipoId:null}
+                    ]
                 }
             })
-            if(existeDorsalEquipo) throw new AppError('Este recurso ya se encuentra registrado',409)
+            if(existeDorsalEquipo) throw new AppError('El dorsal ya está en uso en este equipo',409)
         }
 
         const jugadorEditado = await transaccion.jugador.update({
@@ -148,7 +155,7 @@ const eliminarJugador = async (jugadorId) => {
                 id:jugadorId
             }
         })
-        if(!existeJugador) throw new AppError('Recurso no encontrado',404)
+        if(!existeJugador) throw new AppError('El jugador no se encuentra registrado',404)
         
         const jugadorEliminado = await transaccion.jugador.delete({
             where:{
@@ -169,14 +176,14 @@ const añadirJugadorAEquipo = async (jugadorId,equipoId,dorsal) => {
                 id:jugadorId
             }
         })
-        if(!existeJugador) throw new AppError('Recurso no encontrado',404)
+        if(!existeJugador) throw new AppError('El jugador no se encuentra registrado',404)
         
         const existeEquipo = await transaccion.equipo.findFirst({
             where:{
                 id:equipoId
             }
         })
-        if(!existeEquipo) throw new AppError('Recurso no encontrado',404)
+        if(!existeEquipo) throw new AppError('El equipo no se encuentra registrado',404)
 
         const existeDorsalEquipo = await transaccion.jugador.findFirst({
             where:{
@@ -185,7 +192,7 @@ const añadirJugadorAEquipo = async (jugadorId,equipoId,dorsal) => {
                 NOT: { id: jugadorId }
             }
         })
-        if(existeDorsalEquipo) throw new AppError('Recurso dorsal duplicado en el equipo')
+        if(existeDorsalEquipo) throw new AppError('El dorsal ya está en uso en este equipo',409)
         
         const jugadorAñadido = await transaccion.jugador.update({
             where:{
@@ -208,16 +215,16 @@ const eliminarJugadorDeEquipo = async (jugadorId,equipoId) => {
                 id:jugadorId
             }
         })
-        if(!existeJugador) throw new AppError('Recurso no encontrado',404)
+        if(!existeJugador) throw new AppError('El jugador no se encuentra registrado',404)
         
         const existeEquipo = await transaccion.equipo.findFirst({
             where:{
                 id:equipoId
             }
         })
-        if(!existeEquipo) throw new AppError('Recurso no encontrado',404)
+        if(!existeEquipo) throw new AppError('El equipo no se encuentra registrado',404)
 
-        if(existeJugador.equipoId!==equipoId) throw new AppError('Este jugador no pertenece a ese equipo')
+        if(existeJugador.equipoId!==equipoId) throw new AppError('El jugador no pertenece a este equipo',400)
         
         const jugadorEliminado = await transaccion.jugador.update({
             where:{

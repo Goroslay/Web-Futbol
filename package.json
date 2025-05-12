@@ -18,12 +18,14 @@
   },
   "homepage": "https://github.com/Goroslay/Web-Futbol#readme",
   "dependencies": {
-    "@prisma/client": "^6.6.0",
+    "@prisma/client": "^6.7.0",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "prisma": "^6.7.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10",
-    "prisma": "^6.6.0"
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.10"
   }
 }

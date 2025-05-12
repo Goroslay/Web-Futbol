@@ -1,25 +1,23 @@
 import { Router } from "express";
 
+import { validateEquipo } from "../middlewares/validators/index.validator.js";
+import { validarCampos,validateIdNumeric } from "../middlewares/validators/common.validator.js";
+import { getEquipos,getEquipoById,postEquipo,putEquipo,deleteEquipo,postEquipoATorneo,deleteEquipoAtorneo } from "../controllers/equipo.controller.js";
+
 const equiposRouter = Router()
 
-equiposRouter.get('/equipos',(req,res,next)=>{
-    res.send('obtener todos los equipos')
-})
+equiposRouter.get('/equipos',validateEquipo.validateEquipoFilter,validarCampos,getEquipos)
 
-equiposRouter.get('/equipos/:id',(req,res,next)=>{
-    res.send('obtener equipo por su id')
-})
+equiposRouter.get('/equipos/:id',validateIdNumeric,validarCampos,getEquipoById)
 
-equiposRouter.post('/equipos',(req,res,next)=>{
-    res.send('agregar equipo')
-})
+equiposRouter.post('/equipos',validateEquipo.validateEquipocreate,validarCampos,postEquipo)
 
-equiposRouter.get('/equipos/:id',(req,res,next)=>{
-    res.send('editar un equipos por su id')
-})
+equiposRouter.put('/equipos/:id',validateIdNumeric,validateEquipo.validateEquipoUpdate,validarCampos,putEquipo)
 
-equiposRouter.delete('/equipos/:id',(req,res,next)=>{
-    res.send('eliminar equipo por su id')
-})
+equiposRouter.delete('/equipos/:id',validateIdNumeric,validarCampos,deleteEquipo)
+
+equiposRouter.post('/equipos/:equipoId/:torneoId',postEquipoATorneo)
+
+equiposRouter.delete('/equipos/:equipoId/:torneoId',deleteEquipoAtorneo)
 
 export default equiposRouter

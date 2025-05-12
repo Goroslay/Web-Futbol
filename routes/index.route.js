@@ -1,5 +1,4 @@
 import equiposRouter from './equipo.route.js'
-import estadioRouter from './estadio.route.js'
 import estadisticaRouter from './estadistica.route.js'
 import golRouter from './gol.route.js'
 import jugadorRouter from './jugador.route.js'
@@ -16,7 +15,6 @@ import { Router } from 'express'
 const indexRouter = Router()
 
 indexRouter.use(equiposRouter)
-indexRouter.use(estadioRouter)
 indexRouter.use(estadisticaRouter)
 indexRouter.use(golRouter)
 indexRouter.use(jugadorRouter)

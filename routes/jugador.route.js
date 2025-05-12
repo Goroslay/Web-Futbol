@@ -1,25 +1,24 @@
 import { Router } from "express";
 
+import { validateJugador } from "../middlewares/validators/index.validator.js";
+import { validarCampos } from "../middlewares/validators/common.validator.js";
+
+import { getJugadores ,getJugadorById,postJugadores,putJugadores,deleteJugadores,postJugadoresEquipo,deleteJugadoresEquipo} from "../controllers/jugador.controller.js";
+
 const jugadorRouter = Router()
 
-jugadorRouter.get('/jugadores',(req,res,next)=>{
-    res.send('obtener todos los jugadores')
-})
+jugadorRouter.get('/jugadores',validateJugador.validateJugadorFilter,validarCampos,getJugadores)
 
-jugadorRouter.get('/jugadores/:id',(req,res,next)=>{
-    res.send('obtener jugador por su id')
-})
+jugadorRouter.get('/jugadores/:id',getJugadorById)
 
-jugadorRouter.post('/jugadores',(req,res,next)=>{
-    res.send('agregar jugador')
-})
+jugadorRouter.post('/jugadores',validateJugador.validateJugadorCreation,validarCampos,postJugadores)
 
-jugadorRouter.get('/jugadores/:id',(req,res,next)=>{
-    res.send('editar un jugador por su id')
-})
+jugadorRouter.put('/jugadores/:id',validateJugador.validateUpdateJugador,validarCampos,putJugadores)
 
-jugadorRouter.delete('/jugadores/:id',(req,res,next)=>{
-    res.send('eliminar jugador por su id')
-})
+jugadorRouter.delete('/jugadores/:id',deleteJugadores)
+
+jugadorRouter.post('/jugadores/:jugadorId/:equipoId',postJugadoresEquipo)
+
+jugadorRouter.delete('/jugadores/:jugadorId/:equipoId',deleteJugadoresEquipo)
 
 export default jugadorRouter
