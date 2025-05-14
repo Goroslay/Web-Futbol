@@ -160,3 +160,10 @@ async function obtenerEquipo(equipoId,cliente=prisma) {
     })
     return equipo
 }
+
+export {
+    crearTransferencia,
+    obtenerTransferencias,
+    editarTransferencia,
+    eliminarTransferencia
+}

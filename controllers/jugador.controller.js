@@ -26,7 +26,7 @@ const getJugadorById = async (req,res,next) => {
         const jugador = await obtenerJugador({id})
         return res.status(200).json({
             success:true,
-            data:jugador
+            data:jugador[0]
         })
     } catch (e) {
         next(e)

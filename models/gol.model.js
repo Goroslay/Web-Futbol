@@ -31,16 +31,16 @@ const crearGol = async (gol) => {
         if(gol.minuto>125 || gol.minuto<1) throw new AppError('Minuto de partido no valido',400)
 
         const existePartido = await obtenerPartido(gol.partidoId,transaccion)
-        if(!existePartido) throw new AppError('Recurso no encontrado',404)
+        if(!existePartido) throw new AppError('Partido no encontrado',404)
 
         const existeJugador = await obtenerJugador(gol.jugadorId,transaccion)
-        if(!existeJugador) throw new AppError('Recurso no encontrado',404)
+        if(!existeJugador) throw new AppError('Jugador no encontrado',404)
         
         const existeDeEquipo = await obtenerEquipo(gol.deEquipoId,transaccion)
-        if(!existeDeEquipo) throw new AppError('Recurso no encontrado',404)
+        if(!existeDeEquipo) throw new AppError('Equipo que anota gol no encontrado',404)
 
         const existeAEquipo = await obtenerEquipo(gol.aEquipoId,transaccion)
-        if(!existeAEquipo) throw new AppError('Recurso no encontrado',404)
+        if(!existeAEquipo) throw new AppError('Equipo que le anotaron gol no encontrado',404)
 
         if(existeJugador.equipoId!==gol.deEquipoId) throw new AppError('Este jugador no pertenece al equipo que anoto el gol',404)
         
@@ -73,26 +73,26 @@ const editarGol = async (golId,ediciones) => {
         if(ediciones.minuto && (ediciones.minuto>125 || ediciones.minuto<1)) throw new AppError('Minuto de partido no valido',400)
 
         const existeGol = await obtenerGol(golId,transaccion)
-        if(!existeGol) throw new AppError('Recurso no encontrado',404)
+        if(!existeGol) throw new AppError('Gol no encontrado',404)
             
         if(ediciones.partidoId){
             const existePartido = await obtenerPartido(ediciones.partidoId,transaccion)
-            if(!existePartido) throw new AppError('Recurso no encontrado',404)
+            if(!existePartido) throw new AppError('Partido no encontrado',404)
         }
         
         if(ediciones.jugadorId){
             const existeJugador = await obtenerJugador(ediciones.jugadorId,transaccion)
-            if(!existeJugador) throw new AppError('Recurso no encontrado',404)
+            if(!existeJugador) throw new AppError('Jugador no encontrado',404)
         }
 
         if(ediciones.deEquipoId){
             const existeDeEquipo = await obtenerEquipo(ediciones.deEquipoId,transaccion)
-            if(!existeDeEquipo) throw new AppError('Recurso no encontrado',404)
+            if(!existeDeEquipo) throw new AppError('Equipo que anota gol no encontrado',404)
         }
 
         if(ediciones.aEquipoId){
             const existeAEquipo = await obtenerEquipo(ediciones.aEquipoId,transaccion)
-            if(!existeAEquipo) throw new AppError('Recurso no encontrado',404)
+            if(!existeAEquipo) throw new AppError('Equipo que recibe gol no encontrado',404)
         }
 
         const deEquipoId = ediciones.deEquipoId ?? existeGol.deEquipoId
@@ -135,7 +135,7 @@ const editarGol = async (golId,ediciones) => {
 const eliminarGol = async (golId) => {
     return prisma.$transaction(async (transaccion) => {
         const existeGol = await obtenerGol(golId,transaccion)
-        if(!existeGol) throw new AppError('Recurso no encontrado',404)
+        if(!existeGol) throw new AppError('Gol no encontrado',404)
         
         const golEliminado = await transaccion.gol.delete({
             where:{
@@ -198,10 +198,10 @@ async function verificarEquipoPartido(deEquipoId,partidoId,cliente=prisma) {
     const existe = await cliente.partido.findUnique({
         where:{
             id:partidoId,
-            OR:{
-                equipoLocalId:deEquipoId,
-                equipoVisitanteId:deEquipoId
-            }
+            OR:[
+                {equipoLocalId:deEquipoId},
+                {equipoVisitanteId:deEquipoId}
+            ]
         }
     })
     return existe

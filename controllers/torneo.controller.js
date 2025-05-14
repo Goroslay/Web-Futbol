@@ -5,7 +5,7 @@ const getTorneos = async (req,res,next) => {
     try {
         const torneos = await obtenerTorneo(req.body)
         return res.status(200).json({
-            succes:true,
+            success:true,
             data:torneos
         })
     } catch (e) {
@@ -19,8 +19,8 @@ const getTorneoById = async (req,res,next) => {
         const id=Number(req.params.id)
         const torneo = await obtenerTorneo({id})
         return res.status(200).json({
-            succes:true,
-            data:torneo
+            success:true,
+            data:torneo[0]
         })
     } catch (e) {
         next(e)
@@ -32,7 +32,7 @@ const postTorneo = async (req,res,next) => {
     try {
         const torneo = await crearTorneo(req.body)
         return res.status(201).json({
-            succes:true,
+            success:true,
             data:torneo
         })
     } catch (e) {
@@ -45,7 +45,7 @@ const putTorneo = async (req,res,next) => {
         const id=Number(req.params.id)
         const torneo = await editarTorneo(id,req.body)
         return res.status(200).json({
-            succes:true,
+            success:true,
             data:torneo
         })
     } catch (e) {
@@ -58,7 +58,7 @@ const deleteTorneo = async (req,res,next) => {
         const id=Number(req.params.id)
         const torneo = await eliminarTorneo(id)
         return res.status(200).json({
-            succes:true,
+            success:true,
             data:torneo
         })
     } catch (e) {

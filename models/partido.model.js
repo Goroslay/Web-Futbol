@@ -1,4 +1,4 @@
-import AppErrror from "../utils/appError.js"
+import AppError from "../utils/appError.js"
 import cliente from '../config/prismaClient.js'
 
 const prisma = cliente
@@ -35,87 +35,48 @@ const crearPartido = async (partido) => {
     
     return prisma.$transaction(async(transaccion)=>{
 
-        const existeTorneo = await transaccion.torneo.findUnique({
-            where:{
-                id:partido.torneoId
-            }
-        })
+        const existeTorneo = await obtenerTorneo(partido.torneoId,transaccion)
 
-        if(!existeTorneo) throw new AppErrror('Recurso no encontrado',404)
+        if(!existeTorneo) throw new AppError('Torneo no encontrado',404)
 
         const fechaInicio = new Date(partido.fecha)
         const fechaFin = new Date(partido.fecha)
         fechaInicio.setHours(0, 0, 0, 0)
         fechaFin.setHours(23,59,59,999)
 
+        const Equipos = await obtenerEquipos(partido.equipoLocalId,partido.equipoVisitanteId,fechaInicio,fechaFin,transaccion)
+        const equipoLocal = Equipos.find((equipo)=>equipo.id===partido.equipoLocalId)
+        const equipoVisitante = Equipos.find((equipo)=>equipo.id===partido.equipoVisitanteId)
 
-        const existeEquipoLocal = await transaccion.equipo.findUnique({
-            where:{
-                id:partido.equipoLocalId
-            },
-            include:{
-                partidosLocal:{
-                    where:{
-                        fecha:{
-                            gte:fechaInicio,
-                            lte:fechaFin
-                        }
-                    }
-                },
-                partidosVisitante:{
-                    where:{
-                        fecha:{
-                            gte:fechaInicio,
-                            lte:fechaFin
-                        }
-                    }
-                }
-            }
-        })
+        if(!equipoLocal) throw new AppError('Equipo local no encontrado',404)
+        if(!equipoVisitante) throw new AppError('Equipo visitante no encontrado',404)
+        
+        if(partido.equipoLocalId === partido.equipoVisitanteId) throw new AppError('Equipos duplicados',409)
+        
+        
 
-        if(!existeEquipoLocal) throw new AppErrror('Recurso no encontrado',404)
-    
-        const existeEquipoVisitante = await transaccion.equipo.findUnique({
-            where:{
-                id:partido.equipoVisitanteId
-            },
-            include:{
-                partidosLocal:{
-                    where:{
-                        fecha:{
-                            gte:fechaInicio,
-                            lte:fechaFin
-                        }
-                    }
-                },
-                partidosVisitante:{
-                    where:{
-                        fecha:{
-                            gte:fechaInicio,
-                            lte:fechaFin
-                        }
-                    }
-                }
-            }
-        })
-
-        if(!existeEquipoVisitante) throw new AppErrror('Recurso no encontrado',404)
-
-        if(partido.equipoLocalId === partido.equipoVisitanteId) throw new AppErrror('Recurso equipos duplicados',409)
-
-        if(existeEquipoLocal.partidosLocal.length>0 || existeEquipoLocal.partidosVisitante.length>0){
-            throw new AppErrror('El equipo local ya tiene partidos asignados para esta fecha',409)
+        if(equipoLocal.partidosLocal.length>0 || equipoLocal.partidosVisitante.length>0){
+            throw new AppError('El equipo local ya tiene partidos asignados para esta fecha',409)
         }   
         
-        if(existeEquipoVisitante.partidosLocal.length>0 || existeEquipoVisitante.partidosVisitante.length>0){
-            throw new AppErrror('El equipo visitante ya tiene partidos asignados para esta fecha',409)
+        if(equipoVisitante.partidosLocal.length>0 || equipoVisitante.partidosVisitante.length>0){
+            throw new AppError('El equipo visitante ya tiene partidos asignados para esta fecha',409)
         }
 
-        const estados = ['programado', 'curso', 'finalizado', 'suspendido'];
-        const estadoValido = estados.includes(partido.estado);
+        if(partido.estado){
+            const estados = ['programado', 'curso', 'finalizado', 'suspendido'];
+            const estadoValido = estados.includes(partido.estado);
+            if(!estadoValido) throw new AppError('Estado de partido no valido',400)
 
-        if(!estadoValido) throw new AppErrror('Estado de partido no valido',400)
+            const fechaActual = new Date(Date.now())
+            if(partido.estado==='programado' && fechaInicio<fechaActual) throw new AppError('La fecha debe ser igual o posterior al dia actual para programar un partido',400)
 
+            if(partido.estado==='curso' && fechaActual !== fechaInicio) throw new AppError('La fecha debe ser igual al dia actual para que un partido este en curso',400)
+
+            if(partido.estado==='finalizado' && fechaInicio>fechaActual) throw new AppError('El partido no puede finalizar antes de empezar',400)
+                            
+        }
+        
         const nuevoPartido = await transaccion.partido.create({
             data:{
                 torneoId: partido.torneoId,
@@ -135,104 +96,44 @@ const crearPartido = async (partido) => {
 
 const editarPartido = async (partidoId,ediciones) => {
     return prisma.$transaction(async(transaccion)=>{
-        const existePartido = await transaccion.partido.findUnique({
-            where:{
-                id:partidoId
-            }
-        })
+        const existePartido = await obtenerPartido(partidoId)
 
-        if(!existePartido) throw new AppErrror('Recurso no encontrado',404)
+        if(!existePartido) throw new AppError('Partido no encontrado',404)
 
         const fechaInicio =new Date( ediciones.fecha ?? existePartido.fecha)
         const fechaFin =new Date( ediciones.fecha ?? existePartido.fecha)
         fechaInicio.setHours(0,0,0,0)
         fechaFin.setHours(23,59,59,999)
         
-        if(ediciones.torneoId){
-            const existeTorneo = await transaccion.torneo.findUnique({
-                where:{
-                    id:ediciones.torneoId
-                }
-            })
+        
+        const existeTorneo = await obtenerTorneo(ediciones.torneoId ?? existePartido.torneoId)
+
+        if(!existeTorneo) throw new AppError('Torneo no encontrado',404)
     
-            if(!existeTorneo) throw new AppErrror('Recurso no encontrado',404)
+        const equipos = await obtenerEquipos(
+            ediciones.equipoLocalId ?? existePartido.equipoLocalId,
+            ediciones.equipoVisitanteId ?? existePartido.equipoVisitanteId,
+            fechaInicio,
+            fechaFin,
+            transaccion
+        )
+
+        const equipoLocalId = ediciones.equipoLocalId ?? existePartido.equipoLocalId
+
+        const existeEquipoLocal = equipos.find((equipo)=>equipo.id === equipoLocalId)
+        if(!existeEquipoLocal) throw new AppError('Equipo local no encontrado',404)
+            
+        if((existeEquipoLocal.partidosLocal.length>0 || existeEquipoLocal.partidosVisitante.length>0) && ediciones.fecha){
+            throw new AppError('El equipo local ya tiene partidos asignados para esta fecha',409)
         }
 
-        if(ediciones.equipoLocalId){
-            
-            const existeEquipoLocal = await transaccion.equipo.findUnique({
-                where:{
-                    id:ediciones.equipoLocalId
-                },
-                include:{
-                    partidosLocal:{
-                        where:{
-                            fecha:{
-                                gte:fechaInicio,
-                                lte:fechaFin
-                            },
-                            NOT:{
-                                id:partidoId
-                            }
-                        }
-                    },
-                    partidosVisitante:{
-                        where:{
-                            fecha:{
-                                gte:fechaInicio,
-                                lte:fechaFin
-                            },
-                            NOT:{
-                                id:partidoId
-                            }
-                        }
-                    }
-                }
-            })
-    
-            if(!existeEquipoLocal) throw new AppErrror('Recurso no encontrado',404)
-                
-            if(existeEquipoLocal.partidosLocal.length>0 || existeEquipoLocal.partidosVisitante.length>0){
-                throw new AppErrror('El equipo local ya tiene partidos asignados para esta fecha',409)
-            }
-        }
+        const equipoVisitanteId = ediciones.equipoVisitanteId ?? existePartido.equipoVisitanteId
 
-        if(ediciones.equipoVisitanteId){
-            const existeEquipoVisitante = await transaccion.equipo.findUnique({
-                where:{
-                    id:ediciones.equipoVisitanteId
-                },
-                include:{
-                    partidosLocal:{
-                        where:{
-                            fecha:{
-                                gte:fechaInicio,
-                                lte:fechaFin
-                            },
-                            NOT:{
-                                id:partidoId
-                            }
-                        }
-                    },
-                    partidosVisitante:{
-                        where:{
-                            fecha:{
-                                gte:fechaInicio,
-                                lte:fechaFin
-                            },
-                            NOT:{
-                                id:partidoId
-                            }
-                        }
-                    }
-                }
-            })
-    
-            if(!existeEquipoVisitante) throw new AppErrror('Recurso no encontrado',404)
+        const existeEquipoVisitante = equipos.find((equipo)=>equipo.id === equipoVisitanteId)
+        if(!existeEquipoVisitante) throw new AppError('Equipo visitante no encontrado',404)
             
-            if(existeEquipoVisitante.partidosLocal.length>0 || existeEquipoVisitante.partidosVisitante.length>0){
-                throw new AppErrror('El equipo visitante ya tiene partidos asignados para esta fecha',409)
-            }
+        if((existeEquipoVisitante.partidosLocal.length>0 || existeEquipoVisitante.partidosVisitante.length>0) && ediciones.fecha){
+            throw new AppError('El equipo visitante ya tiene partidos asignados para esta fecha',409)
         }
 
         const nuevoEquipoLocalId = ediciones.equipoLocalId !== undefined ? ediciones.equipoLocalId : existePartido.equipoLocalId;
@@ -240,13 +141,21 @@ const editarPartido = async (partidoId,ediciones) => {
 
 
         if (nuevoEquipoLocalId === nuevoEquipoVisitanteId) {
-            throw new AppErrror('Recurso equipos duplicados', 409);
+            throw new AppError('Equipos duplicados', 409);
         }
 
         if(ediciones.estado){
             const estados = ['programado', 'curso', 'finalizado', 'suspendido'];
             const estadoValido = estados.includes(ediciones.estado);
-            if(!estadoValido) throw new AppErrror('Estado de partido no valido',400)
+            if(!estadoValido) throw new AppError('Estado de partido no valido',400)
+
+            const fechaActual = new Date(Date.now())
+            if(ediciones.estado==='programado' && fechaInicio<fechaActual) throw new AppError('La fecha debe ser igual o posterior al dia actual para programar un partido',400)
+
+            if(ediciones.estado==='curso' && fechaActual !== fechaInicio) throw new AppError('La fecha debe ser igual al dia actual para que un partido este en curso',400)
+
+            if(ediciones.estado==='finalizado' && fechaInicio>fechaActual) throw new AppError('El partido no puede finalizar antes de empezar',400)
+                            
         }
 
         const partidoEditado = await transaccion.partido.update({
@@ -271,12 +180,8 @@ const editarPartido = async (partidoId,ediciones) => {
 
 const eliminarPartido = async (partidoId) => {
     return prisma.$transaction(async(transaccion)=>{
-        const existePartido = await transaccion.partido.findUnique({
-            where:{
-                id:partidoId
-            }
-        })
-        if(!existePartido) throw new AppErrror('Recurso no encontrado',404)
+        const existePartido = await obtenerPartido(partidoId)
+        if(!existePartido) throw new AppError('Partido no encontrado',404)
 
         const partidoEliminado = await transaccion.partido.delete({
             where:{
@@ -287,6 +192,62 @@ const eliminarPartido = async (partidoId) => {
         return partidoEliminado
     })
 }
+
+
+async function obtenerTorneo(torneoId,cliente=prisma) {
+    const existeTorneo = await cliente.torneo.findUnique({
+            where:{
+                id:torneoId
+            },
+            include:{
+                partidos:true
+            }
+            
+        })
+    return existeTorneo
+}
+
+async function obtenerEquipos(equipoLocalId,equipoVisitanteId,fechaInicio,fechaFin,cliente=prisma) {
+    const equipos = await cliente.equipo.findMany({
+        where:{
+            OR:[
+                {id:equipoLocalId},
+                {id:equipoVisitanteId}
+            ]
+        },
+            include:{
+                partidosLocal:{
+                    where:{
+                        fecha:{
+                            gte:fechaInicio,
+                            lte:fechaFin
+                        }
+                    }
+                },
+                partidosVisitante:{
+                    where:{
+                        fecha:{
+                            gte:fechaInicio,
+                            lte:fechaFin
+                        }
+                    }
+                }
+            }
+    })
+    return equipos
+}
+
+
+async function obtenerPartido(partidoId,cliente=prisma) {
+    const existePartido = await cliente.partido.findUnique({
+        where:{
+            id:partidoId
+        }
+    })
+
+    return existePartido
+}
+
 
 export {
     obtenerPartidos,

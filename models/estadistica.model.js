@@ -42,6 +42,7 @@ const crearEstadistica = async (estadistica) => {
         if(!existeTorneo) throw new AppError('Este torneo no se encuentra registrado',404)
 
         const existeJugadorEnTorneo = existeTorneo.equipos.some((equipo)=>equipo.id===existeJugador.equipoId)
+        console.log(existeJugadorEnTorneo)
         if(!existeJugadorEnTorneo) throw new AppError('Este jugador no participa en este torneo',404)
         
         if(estadistica.partidosJugados < 0 ) throw new AppError('Numero no valido para partidos jugados',400)

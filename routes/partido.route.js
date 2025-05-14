@@ -1,25 +1,20 @@
 import { Router } from "express";
 
+import { getPartidos,getPartidosById,postPartido,putPartido,deletePartido } from "../controllers/partido.controller.js";
+import { validatePartido } from "../middlewares/validators/index.validator.js";
+import { validarCampos, validateIdNumeric } from "../middlewares/validators/common.validator.js";
+
+
 const partidoRouter = Router()
 
-partidoRouter.get('/partidos',(req,res,next)=>{
-    res.send('obtener todos los partidos')
-})
+partidoRouter.get('/partidos',validatePartido.validatePartidoFilter,validarCampos,getPartidos)
 
-partidoRouter.get('/partidos/:id',(req,res,next)=>{
-    res.send('obtener partido por su id')
-})
+partidoRouter.get('/partidos/:id',validateIdNumeric,validarCampos,getPartidosById)
 
-partidoRouter.post('/partidos',(req,res,next)=>{
-    res.send('agregar partido')
-})
+partidoRouter.post('/partidos',validatePartido.validatePartidoCreation,validarCampos,postPartido)
 
-partidoRouter.get('/partidos/:id',(req,res,next)=>{
-    res.send('editar un partido por su id')
-})
+partidoRouter.put('/partidos/:id',validateIdNumeric,validatePartido.validatePartidoFilter,validarCampos,putPartido)
 
-partidoRouter.delete('/partidos/:id',(req,res,next)=>{
-    res.send('eliminar partido por su id')
-})
+partidoRouter.delete('/partidos/:id',validateIdNumeric,validarCampos,deletePartido)
 
 export default partidoRouter

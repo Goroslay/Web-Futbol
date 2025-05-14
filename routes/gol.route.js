@@ -1,25 +1,20 @@
 import { Router } from "express";
 
+import { validateGol } from "../middlewares/validators/index.validator.js";
+import {validarCampos,validateIdNumeric} from '../middlewares/validators/common.validator.js'
+
+import { getGol,getGolById,postGol,putGol,deleteGol } from "../controllers/gol.controller.js";
+
 const golRouter = Router()
 
-golRouter.get('/gol',(req,res,next)=>{
-    res.send('obtener todos los goles')
-})
+golRouter.get('/gol',validateGol.validateGolFilter,validarCampos,getGol)
 
-golRouter.get('/gol/:id',(req,res,next)=>{
-    res.send('obtener gol por su id')
-})
+golRouter.get('/gol/:id',validateIdNumeric,validarCampos,getGolById)
 
-golRouter.post('/gol',(req,res,next)=>{
-    res.send('agregar gol')
-})
+golRouter.post('/gol',validateGol.validateGolCreate,validarCampos,postGol)
 
-golRouter.get('/gol/:id',(req,res,next)=>{
-    res.send('editar un gol por su id')
-})
+golRouter.put('/gol/:id',validateIdNumeric,validateGol.validateGolUpdate,validarCampos,putGol)
 
-golRouter.delete('/gol/:id',(req,res,next)=>{
-    res.send('eliminar gol por su id')
-})
+golRouter.delete('/gol/:id',validateIdNumeric,validarCampos,deleteGol)
 
 export default golRouter

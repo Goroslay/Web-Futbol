@@ -1,25 +1,20 @@
 import { Router } from "express";
 
+import { validateEstadistica } from "../middlewares/validators/index.validator.js";
+import { validateIdNumeric,validarCampos } from "../middlewares/validators/common.validator.js";
+
+import { getEstadisticas,getEstadisticaById,postEstadistica,putEstadistica,deleteEstadistica } from "../controllers/estadistica.controller.js";
+
 const estadisticaRouter = Router()
 
-estadisticaRouter.get('/estadisticas',(req,res,next)=>{
-    res.send('obtener todos las estadisticas')
-})
+estadisticaRouter.get('/estadisticas',validateEstadistica.validateEstadisticaFilter,validarCampos,getEstadisticas)
 
-estadisticaRouter.get('/estadisticas/:id',(req,res,next)=>{
-    res.send('obtener estadistica por su id')
-})
+estadisticaRouter.get('/estadisticas/:id',validateIdNumeric,validarCampos,getEstadisticaById)
 
-estadisticaRouter.post('/estadisticas',(req,res,next)=>{
-    res.send('agregar estadistica')
-})
+estadisticaRouter.post('/estadisticas',validateEstadistica.validateEstadisticaCreate,validarCampos,postEstadistica)
 
-estadisticaRouter.get('/estadisticas/:id',(req,res,next)=>{
-    res.send('editar un estadistica por su id')
-})
+estadisticaRouter.put('/estadisticas/:id',validateIdNumeric,validateEstadistica.validateEstadisticaFilter,validarCampos,putEstadistica)
 
-estadisticaRouter.delete('/estadisticas/:id',(req,res,next)=>{
-    res.send('eliminar estadistica por su id')
-})
+estadisticaRouter.delete('/estadisticas/:id',validateIdNumeric,validarCampos,deleteEstadistica)
 
 export default estadisticaRouter
