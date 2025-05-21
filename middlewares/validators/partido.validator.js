@@ -1,28 +1,28 @@
-import { param,body } from "express-validator";
+import { param,body,query } from "express-validator";
 
 
 const estados = ['programado', 'curso', 'finalizado', 'suspendido']
 
 export const validatePartidoCreation = [
-    body('torneoId')
+    query('torneoId')
         .isInt({gt:-1}).withMessage('El id del torneo no se encuentra en el formato adecuado numerico')
         .notEmpty().withMessage('El id del torneo es requerido'),
-    body('equipoLocalId')
+    query('equipoLocalId')
         .isInt({gt:-1}).withMessage('El id del equipo local no se encuentra en el formato adecuado numerico')
         .notEmpty().withMessage('El id del equipo local es requerido'),
-    body('equipoVisitanteId')
+    query('equipoVisitanteId')
         .isInt({gt:-1}).withMessage('El id del equipo visitante no se encuentra en el formato adecuado numerico')
         .notEmpty().withMessage('El id del equipo visitante es requerido'),
-    body('golesLocal')
+    query('golesLocal')
         .optional()
         .isInt({gt:-1}).withMessage('El numero de goles del equipo local no se encuentra en el formato adecuado numerico'),
-    body('golesVisitante')
+    query('golesVisitante')
         .optional()
         .isInt({gt:-1}).withMessage('El numero de goles del equipo visitante no se encuentra en el formato adecuado numerico'),
-    body('fecha')
+    query('fecha')
         .notEmpty().withMessage('La fecha del partido es requerida')
         .isISO8601().withMessage('La fecha no se encuentra en el formato requerido ISO8601'),
-    body('estadoPartido')
+    query('estadoPartido')
         .optional()
         .isIn(estados).withMessage(`Los estados validos son: ${estados.join(', ')}`)
 ]

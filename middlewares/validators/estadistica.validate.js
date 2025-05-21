@@ -1,33 +1,33 @@
-import { body,param } from "express-validator"
+import { body,param,query } from "express-validator"
 
 
 export const validateEstadisticaFilter = [
-    body('id')
+    query('id')
         .isInt({gt:-1}).withMessage('El id de la estadistica no esta en el formato valido numerico')
         .optional(),
-    body('jugadorId')
+    query('jugadorId')
         .isString().withMessage('El id del jugador no esta en el formato valido string')
         .trim()
         .optional(),
-    body('torneoId')
+    query('torneoId')
         .isInt({gt:-1}).withMessage('El id del torneo no esta en el formato valido numerico')
         .optional(),
-    body('partidosJugados')
+    query('partidosJugados')
         .isInt({gt:-1}).withMessage('El numero de partidos jugados no esta en el formato valido numerico')
         .optional(),
-    body('goles')
+    query('goles')
         .isInt({gt:-1}).withMessage('El numero de goles no esta en el formato valido numerico')
         .optional(),
-    body('asistencias')
+    query('asistencias')
         .isInt({gt:-1}).withMessage('El numero de asistencias no esta en el formato valido numerico')
         .optional(),
-    body('tarjetasAmarillas')
+    query('tarjetasAmarillas')
         .isInt({gt:-1}).withMessage('El numero de tarjetas amarillas no esta en el formato valido numerico')
         .optional(),
-    body('tarjetasRojas')
+    query('tarjetasRojas')
         .isInt({gt:-1}).withMessage('El numero de tarjetas rojas no esta en el formato valido numerico')
         .optional(),
-    body('minutosJugados')
+    query('minutosJugados')
         .isInt({gt:-1}).withMessage('El numero de minutos jugados no esta en el formato valido numerico')
         .optional()
 ]

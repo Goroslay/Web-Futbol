@@ -3,7 +3,7 @@ import { editarPartido,crearPartido,eliminarPartido,obtenerPartidos } from "../m
 
 const getPartidos = async (req,res,next) => {
     try {
-        const partidos = await obtenerPartidos(req.body)
+        const partidos = await obtenerPartidos(req.query)
         return res.status(200).json({
             success: true,
             data:partidos

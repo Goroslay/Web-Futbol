@@ -1,31 +1,31 @@
-import { body,param } from "express-validator";
+import { body,param,query } from "express-validator";
 
 const posiciones = ['PO','LD','DF','LI','MCD','MC','MCO','MI','MD','EI','ED','DC']
 
 export const validateJugadorFilter = [
-    body('nombres')
+    query('nombres')
         .optional()
         .isString().withMessage('El nombre no se encuentra en el formato adecuado String')
         .trim(),
-    body('apellidos')
+    query('apellidos')
         .optional()
         .isString().withMessage('El apellido no se encuentra en el formato adecuado String')
         .trim(),
-    body('fechaNacimiento')
+    query('fechaNacimiento')
         .optional()
         .isISO8601().withMessage('La fecha de nacimiento debe ser una fecha en formato ISO 8601'),
-    body('nacionalidad')
+    query('nacionalidad')
         .optional() 
         .isString().withMessage('La nacionalidad no se encuentra en el formato adecuado String')
         .trim(),
-    body('posicion')
+    query('posicion')
         .optional()
         .isIn(posiciones).withMessage(`La posicion debe ser una de las siguiente: ${posiciones.join(', ')}`)
         .trim(),
-    body('dorsal')
+    query('dorsal')
         .optional()
         .isInt({gt:0,lt:30}).withMessage('El dorsal no se encuentra en el formato adecuado numerico'),
-    body('equipoId')
+    query('equipoId')
         .optional()
         .isInt({gt:-1}).withMessage('El id del equipo no se encuentra en el formato adecuado numerico')
 ]

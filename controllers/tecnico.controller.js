@@ -54,7 +54,7 @@ const putTecnicos = async (req,res,next) => {
 const deleteTecnicos = async (req,res,next) => {
     try {
         const id=Number(req.params.id)
-        const tecnicos = await obtenerTecnicos(id)
+        const tecnicos = await eliminarTecnico(id)
         return res.status(200).json({
             success:true,
             data:tecnicos

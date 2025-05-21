@@ -9,7 +9,7 @@ import {
 
 const getJugadores = async (req,res,next) => {
     try {
-        const jugadores = await obtenerJugador(req.body)
+        const jugadores = await obtenerJugador(req.query)
         return res.status(200).json({
             success:true,
             data:jugadores

@@ -1,23 +1,23 @@
-import { body,param } from "express-validator"
+import { body,param,query } from "express-validator"
 
 export const validateGolFilter = [
-    body('id')
+    query('id')
         .isInt({gt:-1}).withMessage('El id del gol no se encuentra en el formato adecuado numerico')
         .optional(),
-    body('partidoId')
+    query('partidoId')
         .optional()
         .isInt({gt:-1}).withMessage('El id del partido no se encuentra en el formato adecuado numerico'),
-    body('jugadorId')
+    query('jugadorId')
         .optional()
         .isString().withMessage('El id del jugador no se encuentra en el formato adecuado string')
         .trim(),
-    body('minuto')
+    query('minuto')
         .optional()
         .isInt({gt:-1,lt:200}).withMessage('El minuto del partido no se encuentra en el formato correcto numerico'),
-    body('deEquipoId')
+    query('deEquipoId')
         .optional()
         .isInt({gt:-1}).withMessage('El id del equipo que anoto el gol no se encuentra en el formato adecuado numerico'),
-    body('aEquipoId')
+    query('aEquipoId')
         .optional()
         .isInt({gt:-1}).withMessage('El id del equipo que recibio el gol no se encuentra en el formato adecuado numerico'),
 ]

@@ -3,7 +3,7 @@ import { crearEquipo,obtenerEquipos,editarEquipo,eliminarEquipo,agregarEquipoATo
 
 export const getEquipos = async (req,res,next) => {
     try {
-        const equipos = await obtenerEquipos(req.body)
+        const equipos = await obtenerEquipos(req.query)
         return res.status(200).json({
             success:true,
             data:equipos

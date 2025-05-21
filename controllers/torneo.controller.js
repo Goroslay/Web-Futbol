@@ -3,7 +3,7 @@ import { obtenerTorneo,crearTorneo,editarTorneo,eliminarTorneo } from "../models
 
 const getTorneos = async (req,res,next) => {
     try {
-        const torneos = await obtenerTorneo(req.body)
+        const torneos = await obtenerTorneo(req.query)
         return res.status(200).json({
             success:true,
             data:torneos

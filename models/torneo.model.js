@@ -10,7 +10,7 @@ const obtenerTorneo= async (filtros={}) => {
 
     const where = {}
 
-    if(id){
+    if(id !== undefined){
         where.id=id
     }
 

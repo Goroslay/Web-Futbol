@@ -2,7 +2,7 @@ import { crearGol,obtenerGoles,editarGol,eliminarGol } from "../models/gol.model
 
 const getGol = async (req,res,next) => {
     try {
-        const gol = await obtenerGoles(req.body)
+        const gol = await obtenerGoles(req.query)
         return res.status(200).json({
             success:true,
             data:gol

@@ -1,35 +1,35 @@
-import { body,param } from "express-validator";
+import { body,param,query } from "express-validator";
 
 export const validateEquipoFilter = [
 
-    body('nombre')
+    query('nombre')
         .optional()
         .isString().withMessage('El nombre no se encuentra en el formato adecuado String')
         .trim(),
     
-    body('fechaFundacion')
+    query('fechaFundacion')
         .optional()
         .isISO8601().withMessage('La fecha de fundacion debe ser una fecha en formato ISO 8601'),
     
-    body('ciudad')
+    query('ciudad')
         .optional()
         .isString().withMessage('La ciudad no se encuentra en el formato adecuado String')
         .trim(),
 
-    body('estadio')
+    query('estadio')
         .optional()
         .isString().withMessage('La ciudad no se encuentra en el formato adecuado String')
         .trim(),
 
-    body('torneoId')
+    query('torneoId')
         .optional()
         .isInt({gt:-1}).withMessage('El id del torneo no se encuentra en el formato adecuado numerico'),
 
-    body('tecnicoId')
+    query('tecnicoId')
         .optional()
         .isInt({gt:-1}).withMessage('El id del tecnico no se encuentra en el formato adecuado numerico'),
     
-    body('puntos')
+    query('puntos')
         .optional()
         .isInt({gt:-1}).withMessage('Los puntos no se encuentran en el formato adecuado numerico')
 ]

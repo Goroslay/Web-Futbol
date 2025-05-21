@@ -2,7 +2,7 @@ import { crearEstadistica,obtenerEstadisticas,editarEstadistica,eliminarEstadist
 
 const getEstadisticas= async (req,res,next) => {
     try {
-        const estadisticas = await obtenerEstadisticas(req.body)
+        const estadisticas = await obtenerEstadisticas(req.query)
         return res.status(200).json({
             success:true,
             data:estadisticas

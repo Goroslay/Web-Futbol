@@ -7,17 +7,17 @@ const obtenerPartidos = async (filtros={}) => {
     const {id,torneoId,equipoLocalId,equipoVisitanteId,golesLocal,golesVisitante,fecha,estado} = filtros
     const where = {}
 
-    if(id) where.id = id
+    if(id !==undefined) where.id = Number(id)
 
-    if(torneoId) where.torneoId = torneoId
+    if(torneoId !==undefined) where.torneoId = Number(torneoId)
 
-    if(equipoLocalId) where.equipoLocalId = equipoLocalId
+    if(equipoLocalId !==undefined) where.equipoLocalId = Number(equipoLocalId)
 
-    if(equipoVisitanteId) where.equipoVisitanteId = equipoVisitanteId
+    if(equipoVisitanteId !==undefined) where.equipoVisitanteId = Number(equipoVisitanteId)
 
-    if(golesLocal) where.golesLocal = golesLocal
+    if(golesLocal !==undefined) where.golesLocal = Number(golesLocal)
 
-    if(golesVisitante) where.golesVisitante = golesVisitante
+    if(golesVisitante !==undefined) where.golesVisitante = Number(golesVisitante)
 
     if(fecha) where.fecha = new Date(fecha)
 

@@ -1,19 +1,19 @@
-import { body, param } from "express-validator";
+import { body, param,query } from "express-validator";
 
 
 export const validateTorneoFilter = [
-    body('nombre')
+    query('nombre')
         .optional()
         .isString().withMessage('El nombre no se encuentra en el formato adecuado String')
         .trim(),
-    body('temporada')
+    query('temporada')
         .optional()
         .isString().withMessage('La temporada no se encuentra en el formato adecuado String')
         .trim(),
-    body('fechaInicio')
+    query('fechaInicio')
         .optional()
         .isISO8601().withMessage('La fecha de inicio debe ser una fecha en formato ISO 8601'),
-    body('fechaFin')
+    query('fechaFin')
         .optional()
         .isISO8601().withMessage('La fecha de fin debe ser una fecha en formato ISO 8601'),
 ];

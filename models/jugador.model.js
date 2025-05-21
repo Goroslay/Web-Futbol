@@ -7,7 +7,7 @@ const obtenerJugador = async (filtros = {}) => {
     const {id,nombres,apellidos,fechaNacimiento,nacionalidad,posicion,dorsal,equipoId} = filtros
     const where = {}
 
-    if(id) where.id=id
+    if(id !==undefined) where.id=id
 
     if(nombres) where.nombres = {contains:nombres,mode:'insensitive'}
 
@@ -19,9 +19,9 @@ const obtenerJugador = async (filtros = {}) => {
 
     if(posicion) where.posicion = {contains:posicion,mode:'insensitive'}
 
-    if(dorsal) where.dorsal = dorsal
+    if(dorsal !==undefined) where.dorsal = Number(dorsal)
 
-    if(equipoId) where.equipoId = equipoId
+    if(equipoId !==undefined) where.equipoId = Number(equipoId)
 
     const jugadores =await prisma.jugador.findMany({
         where,

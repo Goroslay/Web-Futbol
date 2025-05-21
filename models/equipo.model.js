@@ -16,7 +16,7 @@ const obtenerEquipos = async (filtros = {}) => {
   } = filtros;
   const where = {};
 
-  if (id) where.id = id;
+  if (id !== undefined) where.id = id;
 
   if (nombre) where.nombre = { contains: nombre, mode: "insensitive" };
 
@@ -26,11 +26,11 @@ const obtenerEquipos = async (filtros = {}) => {
 
   if (estadio) where.estadio = { contains: estadio, mode: "insensitive" };
 
-  if (torneoId) where.torneoId = torneoId;
+  if (torneoId !== undefined) where.torneoId = torneoId;
 
-  if (tecnicoId) where.tecnicoId = tecnicoId;
+  if (tecnicoId !== undefined) where.tecnicoId = tecnicoId;
 
-  if (puntos) where.puntos = puntos;
+  if (puntos !== undefined) where.puntos = puntos;
 
   const equipos = await prisma.equipo.findMany({
     where,
@@ -64,7 +64,7 @@ const crearEquipo = async (nuevoEquipo) => {
 
     if (existeNombre) throw new AppError("Equipo con nombre duplicado", 409);
 
-    if (tecnicoId) {
+    if (tecnicoId !== undefined) {
       const existeTecnico = await validarTecnico(tecnicoId, transaccion);
       if (!existeTecnico) {
         throw new AppError("Tecnico no encontrado", 404);
@@ -76,7 +76,7 @@ const crearEquipo = async (nuevoEquipo) => {
         throw new AppError("Tecnico duplicado con otro equipo", 409);
       }
     }
-    if (torneoId) {
+    if (torneoId !== undefined) {
       const existeTorneo = validarTorneo(torneoId, transaccion);
       if (!existeTorneo) {
         throw new AppError("Torneo no encontrado", 404);
@@ -92,7 +92,7 @@ const crearEquipo = async (nuevoEquipo) => {
         );
     }
 
-    if (puntos && puntos < 0)
+    if (puntos !== undefined && puntos < 0)
       throw new AppError("Los puntos no pueden ser menores que 0", 400);
 
     const equipo = await transaccion.equipo.create({
@@ -141,7 +141,7 @@ const editarEquipo = async (equipoId, ediciones) => {
       if (existeNombre) throw new AppError("Equipo con nombre duplicado", 409);
     }
 
-    if (tecnicoId) {
+    if (tecnicoId !== undefined) {
       const existeTecnico = await validarTecnico(tecnicoId);
       if (!existeTecnico) throw new AppError("Tecnico no encontrado", 404);
       const existeEquipoConTecnico = equipos.some(
@@ -161,12 +161,12 @@ const editarEquipo = async (equipoId, ediciones) => {
         );
     }
 
-    if (torneoId) {
+    if (torneoId !== undefined) {
       const existeTorneo = await validarTorneo(torneoId, transaccion);
       if (!existeTorneo) throw new AppError("No se encontro el torneo", 404);
     }
 
-    if (puntos && puntos < 0)
+    if (puntos !== undefined && puntos < 0)
       throw new AppError("Los puntos no pueden ser menores que 0", 400);
 
     const equipoEditado = prisma.equipo.update({

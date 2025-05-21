@@ -7,23 +7,23 @@ const obtenerEstadisticas = async (filtros = {}) => {
     const {id,jugadorId,torneoId,partidosJugados,goles,asistencias,tarjetasAmarillas,tarjetasRojas,minutosJugados} = filtros
     const where = {}
 
-    if(id) where.id = id
+    if(id !== undefined) where.id = id
 
     if(jugadorId) where.jugadorId = jugadorId
 
-    if(torneoId) where.torneoId = torneoId
+    if(torneoId !== undefined) where.torneoId = torneoId
 
-    if(partidosJugados) where.partidosJugados = partidosJugados
+    if(partidosJugados !== undefined) where.partidosJugados = partidosJugados
 
-    if(goles) where.goles = goles
+    if(goles !== undefined) where.goles = goles
 
-    if(asistencias) where.asistencias = asistencias
+    if(asistencias !== undefined) where.asistencias = asistencias
 
-    if(tarjetasAmarillas) where.tarjetasAmarillas = tarjetasAmarillas
+    if(tarjetasAmarillas !== undefined) where.tarjetasAmarillas = tarjetasAmarillas
 
-    if(tarjetasRojas) where.tarjetasRojas = tarjetasRojas
+    if(tarjetasRojas !== undefined) where.tarjetasRojas = tarjetasRojas
 
-    if(minutosJugados) where.minutosJugados = minutosJugados
+    if(minutosJugados !== undefined) where.minutosJugados = minutosJugados
 
     const estadisticas = await prisma.estadisticaJugador.findMany({
         where
