@@ -1,28 +1,28 @@
-import { body,param } from "express-validator";
+import { body,param,query } from "express-validator";
 
 
 const tipoTransferencia = ["traspaso","prestamo","libre"]
 
 export const validateTransferenciaFilter = [
-    body('id')
+    query('id')
         .isInt({gt:-1}).withMessage('El id de la transferencia no se encuentra en el formato valido numerico')
         .optional(),
-    body('jugadorId')
+    query('jugadorId')
         .isString().withMessage('El id del jugador no se encuentra en el formato valido string')
         .optional(),
-    body('equipoOrigenId')
+    query('equipoOrigenId')
         .isInt({gt:-1}).withMessage('El id del equipo de origen no se encuentra en el formato valido numerico')
         .optional(),
-    body('equipoDestinoId')
+    query('equipoDestinoId')
         .isInt({gt:-1}).withMessage('El id del equipo destino no se encuentra en el formato valido numerico')
         .optional(),
-    body('fecha')
+    query('fecha')
         .isISO8601().withMessage('La fecha de la tranferencia no se encuentra en el formato valido ISO8601')
         .optional(),
-    body('monto')
+    query('monto')
         .isDecimal().withMessage('El monto del traspaso no se encuentra en el formato valido decimal')
         .optional(),
-    body('tipo')
+    query('tipo')
         .isIn(tipoTransferencia).withMessage(`El tipo de transferencia no se encuentra entre las validas: ${tipoTransferencia.join(', ')}`)
         .optional()
 ]

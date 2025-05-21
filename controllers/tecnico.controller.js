@@ -2,7 +2,7 @@ import { crearTecnico,obtenerTecnicos,editarTecnico,eliminarTecnico } from "../m
 
 const getTecnicos = async (req,res,next) => {
     try {
-        const tecnicos = await obtenerTecnicos(req.body)
+        const tecnicos = await obtenerTecnicos(req.query)
         return res.status(200).json({
             success:true,
             data:tecnicos

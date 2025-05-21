@@ -7,7 +7,7 @@ const obtenerTecnicos = async (filtros = {}) => {
     const {id,nombres,apellidos,fechaNacimiento} = filtros
     const where = {}
 
-    if(id) where.id = id
+    if(id !== undefined) where.id = Number(id)
 
     if(nombres) where.nombres = {contains:nombres,mode:'insensitive'}
 

@@ -8,12 +8,62 @@
  *   get:
  *     summary: Obtener estadísticas filtradas
  *     tags: [Estadísticas]
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/EstadisticaFiltro'
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: ID de la estadística
+ *       - in: query
+ *         name: jugadorId
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         required: false
+ *         description: ID del jugador
+ *       - in: query
+ *         name: torneoId
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: ID del torneo
+ *       - in: query
+ *         name: partidosJugados
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Número de partidos jugados
+ *       - in: query
+ *         name: goles
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Número de goles
+ *       - in: query
+ *         name: asistencias
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Número de asistencias
+ *       - in: query
+ *         name: tarjetasAmarillas
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Número de tarjetas amarillas
+ *       - in: query
+ *         name: tarjetasRojas
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Número de tarjetas rojas
+ *       - in: query
+ *         name: minutosJugados
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Número de minutos jugados
  *     responses:
  *       200:
  *         description: Lista de estadísticas
@@ -198,28 +248,6 @@
  *       allOf:
  *         - $ref: '#/components/schemas/Estadistica'
 
- *     EstadisticaFiltro:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         jugadorId:
- *           type: string
- *         torneoId:
- *           type: integer
- *         partidosJugados:
- *           type: integer
- *         goles:
- *           type: integer
- *         asistencias:
- *           type: integer
- *         tarjetasAmarillas:
- *           type: integer
- *         tarjetasRojas:
- *           type: integer
- *         minutosJugados:
- *           type: integer
-
  *     ErrorResponse:
  *       type: object
  *       properties:
@@ -257,3 +285,4 @@
  *           schema:
  *             $ref: '#/components/schemas/ErrorResponse'
  */
+

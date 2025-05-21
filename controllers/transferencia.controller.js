@@ -2,7 +2,7 @@ import { crearTransferencia,obtenerTransferencias,editarTransferencia,eliminarTr
 
 const getTransferencias = async (req,res,next) => {
     try {
-        const transferencias = await obtenerTransferencias(req.body)
+        const transferencias = await obtenerTransferencias(req.query)
         return res.status(200).json({
             success:true,
             data:transferencias

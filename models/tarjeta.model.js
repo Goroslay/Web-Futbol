@@ -7,13 +7,13 @@ const obtenerTarjetas = async (filtros = {}) => {
     const {id,partidoId,jugadorId,minuto,tipo} = filtros
     const where = {}
 
-    if(id) where.id=id
+    if(id !== undefined) where.id=Number(id)
 
-    if(partidoId) where.partidoId = partidoId
+    if(partidoId !== undefined) where.partidoId = Number(partidoId)
 
     if(jugadorId) where.jugadorId = jugadorId
 
-    if(minuto) where.minuto = minuto
+    if(minuto !== undefined) where.minuto = Number(minuto)
 
     if(tipo) where.tipo = tipo
 

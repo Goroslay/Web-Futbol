@@ -2,7 +2,7 @@ import { crearTarjeta,obtenerTarjetas,editarTarjeta,eliminarTarjeta } from "../m
 
 const getTarjetas = async (req,res,next) => {
     try {
-        const tarjetas = await obtenerTarjetas(req.body)
+        const tarjetas = await obtenerTarjetas(req.query)
         return res.status(200).json({
             success:true,
             data:tarjetas

@@ -1,22 +1,22 @@
-import { body,param } from "express-validator"
+import { body,param,query } from "express-validator"
 
 const tipoTarjeta = ["amarilla","roja"]
 
 export const validateTarjetaFilter = [
-    body('id')
+    query('id')
         .isInt({gt:-1}).withMessage('El id de la tarjeta no se encuentra en el formato valido numerico')
         .optional(),
-    body('partidoId')
+    query('partidoId')
         .isInt({gt:-1}).withMessage('El id del partido no se encuentra en el formato valido numerico')
         .optional(),
-    body('jugadorId')
+    query('jugadorId')
         .isString().withMessage('El id del jugador no se encuentra en el formato valido string')
         .optional()
         .trim(),
-    body('minuto')
+    query('minuto')
         .isInt({gt:-1, lt:150}).withMessage('El minuto del partido no se encuentra en el formato valido numerico')
         .optional(),
-    body('tipo')
+    query('tipo')
         .isString().withMessage('El tipo de tarjeta no se encuentra en el formato valido string')
         .isIn(tipoTarjeta).withMessage(`El tipo de la tarjeta no se encuentra entre los tipos validos: ${tipoTarjeta.join(', ')}`)
         .optional()

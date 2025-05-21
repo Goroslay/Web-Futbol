@@ -1,5 +1,12 @@
 /**
  * @swagger
+ * tags:
+ *   name: Tarjetas
+ *   description: Gestión de tarjetas mostradas a los jugadores
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     Tarjeta:
@@ -50,20 +57,38 @@
  *         tipo:
  *           type: string
  *           enum: [amarilla, roja]
+ *     RespuestaTarjeta:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *         data:
+ *           $ref: '#/components/schemas/Tarjeta'
  */
 
 /**
  * @swagger
- * /tarjetas:
+ * /api/v1/tarjetas:
  *   get:
  *     summary: Obtener una lista de tarjetas con filtros opcionales
  *     tags: [Tarjetas]
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Tarjeta'
+ *     parameters:
+ *       - in: query
+ *         name: partidoId
+ *         schema:
+ *           type: integer
+ *         description: ID del partido
+ *       - in: query
+ *         name: jugadorId
+ *         schema:
+ *           type: string
+ *         description: ID del jugador
+ *       - in: query
+ *         name: tipo
+ *         schema:
+ *           type: string
+ *           enum: [amarilla, roja]
+ *         description: Tipo de tarjeta
  *     responses:
  *       200:
  *         description: Lista de tarjetas obtenida exitosamente
@@ -82,7 +107,7 @@
 
 /**
  * @swagger
- * /tarjetas/{id}:
+ * /api/vi/tarjetas/{id}:
  *   get:
  *     summary: Obtener una tarjeta por ID
  *     tags: [Tarjetas]
@@ -94,17 +119,14 @@
  *           type: integer
  *         description: ID de la tarjeta
  *     responses:
- *       201:
+ *       200:
  *         description: Tarjeta encontrada
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   $ref: '#/components/schemas/Tarjeta'
+ *               $ref: '#/components/schemas/RespuestaTarjeta'
+ *       404:
+ *         description: Tarjeta no encontrada
  */
 
 /**
@@ -120,17 +142,12 @@
  *           schema:
  *             $ref: '#/components/schemas/TarjetaCreate'
  *     responses:
- *       200:
+ *       201:
  *         description: Tarjeta creada exitosamente
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   $ref: '#/components/schemas/Tarjeta'
+ *               $ref: '#/components/schemas/RespuestaTarjeta'
  *       400:
  *         description: Datos inválidos o conflictos lógicos (por ejemplo, tarjeta duplicada)
  */
@@ -160,12 +177,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   $ref: '#/components/schemas/Tarjeta'
+ *               $ref: '#/components/schemas/RespuestaTarjeta'
  *       404:
  *         description: Tarjeta no encontrada
  */
@@ -189,12 +201,8 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   $ref: '#/components/schemas/Tarjeta'
+ *               $ref: '#/components/schemas/RespuestaTarjeta'
  *       404:
  *         description: Tarjeta no encontrada
  */
+

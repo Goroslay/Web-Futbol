@@ -7,17 +7,17 @@ const obtenerTransferencias = async (filtros = {}) => {
     const {id,jugadorId,equipoOrigenId,equipoDestinoId,fecha,monto,tipo} = filtros
     const where = {}
 
-    if(id) where.id = id
+    if(id !== undefined) where.id = Number(id)
 
     if(jugadorId) where.jugadorId = jugadorId
 
-    if(equipoOrigenId) where.equipoOrigenId = equipoOrigenId
+    if(equipoOrigenId !== undefined) where.equipoOrigenId = Number(equipoOrigenId)
 
-    if(equipoDestinoId) where.equipoDestinoId = equipoDestinoId
+    if(equipoDestinoId !== undefined) where.equipoDestinoId = Number(equipoDestinoId)
 
     if(fecha) where.fecha = new Date(fecha)
 
-    if(monto) where.monto = monto
+    if(monto !== undefined) where.monto = Number(monto)
 
     if(tipo) where.tipo = tipo
 

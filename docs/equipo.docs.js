@@ -3,11 +3,28 @@
  * tags:
  *   name: Equipos
  *   description: Gestión de equipos
- * 
+ */
+
+/**
+ * @swagger
  * /api/v1/equipos:
  *   get:
- *     summary: Obtener todos los equipos
+ *     summary: Obtener todos los equipos (con filtros opcionales)
  *     tags: [Equipos]
+ *     parameters:
+ *       - in: query
+ *         name: nombre
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Filtrar por nombre del equipo
+ *       - in: query
+ *         name: torneoId
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Filtrar por ID del torneo
  *     responses:
  *       200:
  *         description: Lista de equipos obtenida exitosamente
@@ -19,7 +36,11 @@
  *                 $ref: '#/components/schemas/Equipo'
  *       500:
  *         $ref: '#/components/responses/InternalError'
+ */
 
+/**
+ * @swagger
+ * /api/v1/equipos:
  *   post:
  *     summary: Crear un nuevo equipo
  *     tags: [Equipos]
@@ -42,7 +63,10 @@
  *         $ref: '#/components/responses/NotFound'
  *       500:
  *         $ref: '#/components/responses/InternalError'
+ */
 
+/**
+ * @swagger
  * /api/v1/equipos/{id}:
  *   get:
  *     summary: Obtener un equipo por ID
@@ -65,7 +89,11 @@
  *         $ref: '#/components/responses/NotFound'
  *       500:
  *         $ref: '#/components/responses/InternalError'
+ */
 
+/**
+ * @swagger
+ * /api/v1/equipos/{id}:
  *   put:
  *     summary: Actualizar un equipo por ID
  *     tags: [Equipos]
@@ -95,7 +123,11 @@
  *         $ref: '#/components/responses/NotFound'
  *       500:
  *         $ref: '#/components/responses/InternalError'
+ */
 
+/**
+ * @swagger
+ * /api/v1/equipos/{id}:
  *   delete:
  *     summary: Eliminar un equipo por ID
  *     tags: [Equipos]
@@ -113,7 +145,10 @@
  *         $ref: '#/components/responses/NotFound'
  *       500:
  *         $ref: '#/components/responses/InternalError'
+ */
 
+/**
+ * @swagger
  * components:
  *   schemas:
  *     Equipo:
@@ -138,7 +173,7 @@
  *           type: string
  *           format: date-time
  *           example: "2025-05-20T16:00:00Z"
- * 
+
  *     EquipoInput:
  *       type: object
  *       required:
@@ -152,7 +187,7 @@
  *           type: string
  *           format: uuid
  *           example: "b7e8c9d0-1234-5678-9abc-def012345678"
- * 
+
  *     ErrorResponse:
  *       type: object
  *       properties:
@@ -190,4 +225,6 @@
  *           schema:
  *             $ref: '#/components/schemas/ErrorResponse'
  */
+
+
 

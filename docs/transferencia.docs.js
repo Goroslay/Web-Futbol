@@ -7,34 +7,122 @@
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Transferencia:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         jugadorId:
+ *           type: string
+ *           example: "abc123"
+ *         equipoOrigenId:
+ *           type: integer
+ *           example: 2
+ *         equipoDestinoId:
+ *           type: integer
+ *           example: 5
+ *         fecha:
+ *           type: string
+ *           format: date
+ *           example: "2024-06-01"
+ *         monto:
+ *           type: number
+ *           format: float
+ *           example: 1500000.00
+ *         tipo:
+ *           type: string
+ *           enum: [traspaso, prestamo, libre]
+ *           example: "traspaso"
+ * 
+ *     NuevaTransferencia:
+ *       type: object
+ *       required:
+ *         - jugadorId
+ *         - equipoOrigenId
+ *         - equipoDestinoId
+ *         - fecha
+ *         - tipo
+ *       properties:
+ *         jugadorId:
+ *           type: string
+ *         equipoOrigenId:
+ *           type: integer
+ *         equipoDestinoId:
+ *           type: integer
+ *         fecha:
+ *           type: string
+ *           format: date
+ *         monto:
+ *           type: number
+ *           format: float
+ *         tipo:
+ *           type: string
+ *           enum: [traspaso, prestamo, libre]
+ * 
+ *     ActualizarTransferencia:
+ *       type: object
+ *       properties:
+ *         jugadorId:
+ *           type: string
+ *         equipoOrigenId:
+ *           type: integer
+ *         equipoDestinoId:
+ *           type: integer
+ *         fecha:
+ *           type: string
+ *           format: date
+ *         monto:
+ *           type: number
+ *           format: float
+ *         tipo:
+ *           type: string
+ *           enum: [traspaso, prestamo, libre]
+
+ *     RespuestaTransferencia:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *         data:
+ *           $ref: '#/components/schemas/Transferencia'
+ */
+
+/**
+ * @swagger
  * /transferencias:
  *   get:
  *     summary: Obtener todas las transferencias (con filtros opcionales)
  *     tags: [Transferencias]
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: integer
- *               jugadorId:
- *                 type: string
- *               equipoOrigenId:
- *                 type: integer
- *               equipoDestinoId:
- *                 type: integer
- *               fecha:
- *                 type: string
- *                 format: date
- *               monto:
- *                 type: number
- *                 format: float
- *               tipo:
- *                 type: string
- *                 enum: [traspaso, prestamo, libre]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: jugadorId
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: equipoOrigenId
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: equipoDestinoId
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: fecha
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: tipo
+ *         schema:
+ *           type: string
+ *           enum: [traspaso, prestamo, libre]
  *     responses:
  *       200:
  *         description: Lista de transferencias filtradas
@@ -53,7 +141,7 @@
 
 /**
  * @swagger
- * /transferencias/{id}:
+ * /api/v1transferencias/{id}:
  *   get:
  *     summary: Obtener una transferencia por ID
  *     tags: [Transferencias]
@@ -70,19 +158,14 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   $ref: '#/components/schemas/Transferencia'
+ *               $ref: '#/components/schemas/RespuestaTransferencia'
  *       404:
  *         description: Transferencia no encontrada
  */
 
 /**
  * @swagger
- * /transferencias:
+ * /api/v1/transferencias:
  *   post:
  *     summary: Crear una nueva transferencia
  *     tags: [Transferencias]
@@ -98,12 +181,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   $ref: '#/components/schemas/Transferencia'
+ *               $ref: '#/components/schemas/RespuestaTransferencia'
  *       400:
  *         description: Datos inválidos o jugador/equipo inexistente
  */
@@ -133,12 +211,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   $ref: '#/components/schemas/Transferencia'
+ *               $ref: '#/components/schemas/RespuestaTransferencia'
  *       404:
  *         description: Transferencia no encontrada
  */
@@ -162,82 +235,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   $ref: '#/components/schemas/Transferencia'
+ *               $ref: '#/components/schemas/RespuestaTransferencia'
  *       404:
  *         description: Transferencia no encontrada
  */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     Transferencia:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         jugadorId:
- *           type: string
- *         equipoOrigenId:
- *           type: integer
- *         equipoDestinoId:
- *           type: integer
- *         fecha:
- *           type: string
- *           format: date
- *         monto:
- *           type: number
- *           format: float
- *         tipo:
- *           type: string
- *           enum: [traspaso, prestamo, libre]
- *
- *     NuevaTransferencia:
- *       type: object
- *       required:
- *         - jugadorId
- *         - equipoOrigenId
- *         - equipoDestinoId
- *         - fecha
- *         - tipo
- *       properties:
- *         jugadorId:
- *           type: string
- *         equipoOrigenId:
- *           type: integer
- *         equipoDestinoId:
- *           type: integer
- *         fecha:
- *           type: string
- *           format: date
- *         monto:
- *           type: number
- *           format: float
- *         tipo:
- *           type: string
- *           enum: [traspaso, prestamo, libre]
- *
- *     ActualizarTransferencia:
- *       type: object
- *       properties:
- *         jugadorId:
- *           type: string
- *         equipoOrigenId:
- *           type: integer
- *         equipoDestinoId:
- *           type: integer
- *         fecha:
- *           type: string
- *           format: date
- *         monto:
- *           type: number
- *           format: float
- *         tipo:
- *           type: string
- *           enum: [traspaso, prestamo, libre]
-*/
